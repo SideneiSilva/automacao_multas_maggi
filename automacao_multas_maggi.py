@@ -310,7 +310,7 @@ try:
                 status_ativo,
                 empresa,
                 unidade,
-                VALOR_FIXO_TOTAL,
+                f"R$ {VALOR_FIXO_TOTAL:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
                 viagem,
             ]
 
