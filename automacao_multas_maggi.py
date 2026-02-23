@@ -283,7 +283,7 @@ try:
                 if not filtro.empty:
                     registro_base = filtro.iloc[0]
 
-                    motorista = registro_base.get("nome_motorista", "")
+                    motorista = str(registro_base.get("nome_motorista", "")).strip().upper()
                     empresa = registro_base.get("agencia", "")
                     unidade = registro_base.get("operacao_carregamento", "")
                     viagem = registro_base.get("viagem", "")
@@ -310,7 +310,7 @@ try:
                 status_ativo,
                 empresa,
                 unidade,
-                f"R$ {VALOR_FIXO_TOTAL:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
+                f"'R$ {VALOR_FIXO_TOTAL:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
                 viagem,
             ]
 
