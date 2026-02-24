@@ -177,7 +177,6 @@ def mover_email(mail, uid):
 # ===============================================================
 # PROCESSAMENTO PRINCIPAL
 # ===============================================================
-
 print("🚀 Iniciando automação MAGGI...")
 
 try:
@@ -187,13 +186,11 @@ try:
 
     aba_multas = planilha_multas.worksheet(ABA_MULTAS)
     aba_embarcador = planilha_base.worksheet(ABA_EMBARCADOR)
-    aba_motoristas = planilha_base.worksheet(ABA_MOTORISTAS)
 
     df_multas = pd.DataFrame(aba_multas.get_all_records())
     aits_existentes = df_multas["AIT"].astype(str).tolist() if not df_multas.empty else []
 
     df_embarcador = pd.DataFrame(aba_embarcador.get_all_records())
-    df_motoristas = pd.DataFrame(aba_motoristas.get_all_records())
 
     # Normalizações
     df_embarcador["placa"] = df_embarcador["placa"].astype(str).str.upper().str.strip()
@@ -202,8 +199,6 @@ try:
         dayfirst=True,
         errors="coerce"
     )
-
-    df_motoristas["cpf_motorista"] = df_motoristas["cpf_motorista"].astype(str).str.strip()
 
     # EMAIL
     mail = conectar_email()
@@ -240,7 +235,6 @@ try:
 
             registro = dict(zip(headers, linha))
 
-            # 🔒 Captura robusta das colunas
             ait = ""
             placa = ""
             data_infracao = ""
@@ -270,7 +264,6 @@ try:
             empresa = ""
             unidade = ""
             viagem = "NÃO LOCALIZADO"
-            status_ativo = "NÃO LOCALIZADO"
 
             if placa and pd.notnull(data_infracao_dt):
 
@@ -287,18 +280,9 @@ try:
                     empresa = registro_base.get("agencia", "")
                     unidade = registro_base.get("operacao_carregamento", "")
                     viagem = registro_base.get("viagem", "")
-                    cpf = str(registro_base.get("cpf_motorista", "")).strip()
 
-                    validacao = df_motoristas[
-                        df_motoristas["cpf_motorista"] == cpf
-                    ]
-
-                    if not validacao.empty:
-                        status_ativo = (
-                            "ATIVO"
-                            if str(validacao.iloc[0].get("ativo", "")).upper() == "SIM"
-                            else "INATIVO"
-                        )
+            # 🔥 Status removido completamente
+            status_ativo = ""
 
             nova_linha = [
                 "MAGGI",
@@ -307,7 +291,7 @@ try:
                 placa,
                 data_infracao_dt.strftime("%d/%m/%Y") if pd.notnull(data_infracao_dt) else "",
                 motorista,
-                status_ativo,
+                status_ativo,  # permanece coluna, mas vazia
                 empresa,
                 unidade,
                 f"'R$ {VALOR_FIXO_TOTAL:,.2f}".replace(",", "X").replace(".", ",").replace("X", "."),
